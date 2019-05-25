@@ -1,8 +1,10 @@
 import React, { Component } from "react";
+import Images from "./Images";
 
 class Main extends Component {
   state = {
-    breeds: ""
+    breeds: "",
+    images: ""
   };
 
   componentDidMount() {
@@ -14,6 +16,21 @@ class Main extends Component {
         });
       });
   }
+
+  fetchData = e => {
+    const breed = e.target.elements.breeds.value;
+    const count = Number(e.target.elements.imageNumber.value);
+
+    fetch(`https://dog.ceo/api/breed/${breed}/images/random/${count}`)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          images: data.message
+        });
+      });
+    e.preventDefault();
+  };
+
   render() {
     let options;
     const { breeds } = this.state;
@@ -30,7 +47,7 @@ class Main extends Component {
     }
     return (
       <div className="container">
-        <form className="form">
+        <form onSubmit={this.fetchData} className="form">
           {options}
           <select name="imageNumber">
             <option value="5">5</option>
@@ -40,6 +57,7 @@ class Main extends Component {
           </select>
           <button>Generate</button>
         </form>
+        <Images images={this.state.images} />
       </div>
     );
   }
